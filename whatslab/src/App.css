@@ -1,0 +1,7 @@
+.App {
+  height: 100vh;
+  width: 40vw;
+  border: 1px solid black;
+  margin: auto;
+  background-color: #e5ddd5;
+}
