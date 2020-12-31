@@ -1,79 +1,42 @@
 import React from 'react';
-import './App.css';
 import styled from 'styled-components';
-import deleteIcon from './img/delete-icon.png'
 import bg from './img/bg.jpg'
+import { InputContainer } from './components/InputContainer'
 
-const AppContainer = styled.div`
-  border: 1px solid black;
-  height: 100vh;
-  width: 40vw;
-  box-sizing: border-box;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-`
-
-const MessageContainer = styled.div`
-  flex-grow: 1;
-  padding: 5px;
-  display: flex;
-  flex-direction: column-reverse;
-  /* background-color: #e5ddd5; */
-  background-image: url(${bg});
-  overflow-y: auto;
+const AppContainer = styled.section`
+height: 100vh;
+width: 500px;
+margin: auto;
+display: flex;
+flex-direction: column;
+box-sizing: border-box;
 `
 
-const InputContainer = styled.div`
-  display: flex;
-  height: 5vh;
-  padding: 5px;
-  background-color: #f0f0f0;
-`
-const UserInput = styled.input`
-  width: 100px;
-  margin-right: 10px;
-  border-radius: 20px 0 0 20px;
-  border: none;
-  background-color: #ffffff;
-  padding-left: 10px;
-  box-shadow: 1px 1px rgba(0,0,0,0.2);
+const MessageContainer = styled.section`
+display: flex;
+flex-direction: column-reverse;
+flex-grow: 1;
+background-image: url(${bg});
+overflow-y: auto;
 `
 
-const TextInput = styled.input`
-  flex-grow: 1;
-  margin-right: 10px;
-  border-radius: 0 20px 20px 0;
-  border: none;
-  background-color: #ffffff;
-  padding-left: 10px;
-  box-shadow: 1px 1px rgba(0,0,0,0.2);
-`
+let MessageBox
 
-const MessageBox = styled.section`
-  background-color: #ffffff;
-  margin: 10px;
-  padding: 10px;
-  width: min-content;
-  border-radius: 10px 0;
-  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
-`
-const SendButton = styled.button`
-  border-radius: 15px;
-  background-color: #494948;
-  color: #ffffff;
-  border: none;
-  box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-  padding: 10px;
-`
-const MessageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
+let Autor
 
-class App extends React.Component {
+export default class App extends React.Component {
+
   state = {
-    messages: [],
+    messages: [
+      {
+        user: 'Bob',
+        text: 'Oii'
+      },
+      {
+        user: 'Eu',
+        text: 'hello'
+      }
+    ],
     userValue: '',
     messageValue: ''
   }
@@ -96,6 +59,8 @@ class App extends React.Component {
         user: this.state.userValue,
         text: this.state.messageValue
       }
+
+
       this.setState({ messages: [NewMessage, ...this.state.messages], userValue: '', messageValue: '' })
     }
   }
@@ -106,41 +71,71 @@ class App extends React.Component {
     }
   }
 
-  deleteMessage = (text) => {
-    const messageDatabase = this.state.messages
-    const newMessageDatabase = messageDatabase.filter((message) => {
-      return (message.text !== text)
-    })
-    this.setState({messages: newMessageDatabase})
+  deleteMessage = (user, text) => {
+    const messageData = this.state.messages;
+    const newData = messageData.filter((message) => {
+      if (message.user === user && message.text === text) {
+        return false
+      } else {
+        return true
+      }
+    });
+    this.setState({ messages: newData })
   }
 
   render() {
     return (
       <AppContainer>
         <MessageContainer>
-          {this.state.messages.map((message, id) => {
+          {this.state.messages.map((message, index) => {
+            if (message.user.toLowerCase() === "eu") {
+              Autor = styled.p`
+              display: none;
+              `
+
+              MessageBox = styled.section`
+              background-color: rgb(90,190,20);
+              margin: 10px;
+              padding: 10px;
+              width: fit-content;
+              word-break: break-all;
+              max-width: 50%;
+              border-radius: 0 15px;
+              align-self: flex-end;
+              `
+            }
+            else {
+              Autor = styled.p`
+              font-weight: bold;
+              `
+
+              MessageBox = styled.section`
+              background-color: rgb(60,80,200);
+              margin: 10px;
+              padding: 10px;
+              width: fit-content;
+              word-break: break-all;
+              max-width: 50%;
+              border-radius: 15px 0;
+              `
+            }
             return (
-              <MessageBox key={id}>
-                <MessageHeader>
-                  <p><strong>{message.user}</strong></p>
-                  <img className="delete-icon" onClick={() => this.deleteMessage(message.text)} alt="" src={deleteIcon} />
-                </MessageHeader>
+              <MessageBox key={index} onDoubleClick={() => this.deleteMessage(message.user, message.text)}>
+                <Autor>{message.user}</Autor>
                 <p>{message.text}</p>
               </MessageBox>
             )
-
           })}
         </MessageContainer>
-
-        <InputContainer onKeyPress={this.enterSendMessage}>
-          <UserInput onChange={this.onChangeUserValue} value={this.state.userValue} placeholder={'Usuário'} />
-          <TextInput onChange={this.onChangeMessageValue} value={this.state.messageValue} placeholder={'Mensagem'} />
-          <SendButton onClick={this.sendMessage}>Enviar</SendButton>
-        </InputContainer>
+        <InputContainer
+          onChangeUser={this.onChangeUserValue}
+          onChangeMessage={this.onChangeMessageValue}
+          userValue={this.state.userValue}
+          messageValue={this.state.messageValue}
+          onSendClick={this.sendMessage}
+          enterSendMessage={this.enterSendMessage}
+        />
       </AppContainer>
-    );
+    )
   }
-
 }
-
-export default App;
