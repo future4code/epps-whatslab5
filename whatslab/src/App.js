@@ -27,16 +27,7 @@ let Autor
 export default class App extends React.Component {
 
   state = {
-    messages: [
-      {
-        user: 'Bob',
-        text: 'Oii'
-      },
-      {
-        user: 'Eu',
-        text: 'hello'
-      }
-    ],
+    messages: [],
     userValue: '',
     messageValue: ''
   }
